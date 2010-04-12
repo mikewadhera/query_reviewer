@@ -3,7 +3,12 @@
 require 'query_reviewer'
 
 if QueryReviewer.enabled?
-  ActiveRecord::ConnectionAdapters::MysqlAdapter.send(:include, QueryReviewer::MysqlAdapterExtensions)
+  case RUBY_PLATFORM  
+  when /java/
+    ActiveRecord::ConnectionAdapters::JdbcAdapter
+  else
+    ActiveRecord::ConnectionAdapters::MysqlAdapter
+  end.send(:include, QueryReviewer::MysqlAdapterExtensions)
   ActionController::Base.send(:include, QueryReviewer::ControllerExtensions)
   Array.send(:include, QueryReviewer::ArrayExtensions)
   
